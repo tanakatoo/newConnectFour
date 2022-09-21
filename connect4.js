@@ -4,11 +4,17 @@
  * column until a player gets four-in-a-row (horiz, vert, or diag) or until
  * board fills (tie)
  */
-class Player{
-  constructor(colorName) {
-    this.colorName = colorName;
-  }
 
+class Player{
+  constructor() {
+    this.colorName;
+    this.playerNumber;
+  }
+  setColorName(playerNumber) {
+    const playerColor = document.querySelector("#player" + playerNumber).value
+    this.colorName = playerColor
+    this.playerNumber = playerNumber
+  }
 }
 
 
@@ -17,7 +23,8 @@ class Game{
     this.WIDTH = width;
     this.HEIGHT = height;
     this.board = [];
-    this.currPlayer = 1;
+    this.p1 = new Player()
+    this.p2 = new Player()
 
     //have to do bind the clicking function to THIS instance because the clicking happens outside of the class
     //so the THIS when it is clicked is actually the html element instead
@@ -27,13 +34,16 @@ class Game{
     
   }
 
-  startGame() {
-    console.log(this)
+  startGame(e) {
+    e.preventDefault()
+    this.p1.setColorName(1)
+    this.p2.setColorName(2)
+    this.currPlayer = this.p1
+    
     if (this.board) {
 
       //that means it is the end of the game so we need to reset it
       this.board = [];
-      this.currPlayer = 1
       const board = document.getElementById('board');
       while (board.firstChild) {
         board.firstChild.remove()
@@ -93,7 +103,8 @@ class Game{
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor=this.currPlayer.colorName
+    //piece.classList.add(`p${this.currPlayer.playerNumber}`);
     piece.style.top = -50 * (y + 2);
   
     const spot = document.getElementById(`${y}-${x}`);
@@ -113,7 +124,6 @@ class Game{
    handleClick(evt) {
     // get x from ID of clicked cell
     const x = +evt.target.id;
-  console.log(this)
     // get next spot in column (if none, ignore click)
     const y = this.findSpotForCol(x);
     if (y === null) {
@@ -121,12 +131,12 @@ class Game{
     }
   
     // place piece in board and add to HTML table
-    this.board[y][x] = this.currPlayer;
+    this.board[y][x] = this.currPlayer.playerNumber;
     this.placeInTable(y, x);
     
     // check for win
     if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer.playerNumber} won!`);
     }
     
     // check for tie
@@ -135,7 +145,7 @@ class Game{
     }
       
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.p1 ? this.p2 : this.p1;
   }
   
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -148,7 +158,7 @@ class Game{
             y < this.HEIGHT &&
             x >= 0 &&
             x < this.WIDTH&&
-            this.board[y][x] === this.currPlayer
+            this.board[y][x] === this.currPlayer.playerNumber
         }
       );
     
@@ -171,4 +181,6 @@ class Game{
   }
 }
 
+new Player()
+new Player()
 new Game(6,7)

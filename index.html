@@ -5,7 +5,14 @@
 </head>
 <body>
 <div>
-  <button id="startGame">Play (again!)</button>
+  <form id="inputColorForm">
+    <label for="player1">Color for player 1:</label>
+    <input type="string" id="player1" />
+    <label for="player2">Color for player 2:</label>
+    <input type="string" id="player2" />
+    
+    <button type="submit" id="startGame">Play (again!)</button>
+  </form>
 </div>
 <div id="game">
   <table id="board"></table>
